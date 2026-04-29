@@ -1,0 +1,87 @@
+<idea-plugin>
+    <id>ai.cybrium.plugin</id>
+    <name>Cybrium Security Scanner</name>
+    <vendor email="hello@cybrium.ai" url="https://cybrium.ai">Cybrium AI</vendor>
+
+    <description><![CDATA[
+    <h2>Cybrium Security Scanner for IntelliJ</h2>
+    <p>Real-time SAST, secrets, IaC, supply-chain, license compliance, and CIA posture scoring as you code.</p>
+    <ul>
+      <li><b>1,815 rules</b> across 75+ languages</li>
+      <li><b>296 secret patterns</b> + entropy detection + liveness verification</li>
+      <li><b>767 IaC rules</b> (Terraform, CloudFormation, ARM, GCP DM, K8s, Docker)</li>
+      <li><b>CyTriad CIA scoring</b> (Confidentiality, Integrity, Availability)</li>
+      <li><b>Supply-chain</b> CVE + typosquat + license compliance</li>
+      <li><b>App package scan</b> (.app, .ipa, .apk, .exe, .deb, .rpm)</li>
+      <li><b>Repo health</b> check (14 security hygiene checks)</li>
+      <li><b>Auto-fix</b> with dry-run preview</li>
+    </ul>
+    <p>Powered by <a href="https://github.com/cybrium-ai/cyscan">cyscan</a> (Apache 2.0).</p>
+    <p>Install cyscan: <code>brew tap cybrium-ai/cli && brew install cyscan</code></p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <h3>0.1.0</h3>
+    <ul>
+      <li>Initial release</li>
+      <li>Scan on save with inline annotations</li>
+      <li>Tool window with findings tree</li>
+      <li>Quick fix actions</li>
+      <li>CyTriad CIA posture summary</li>
+    </ul>
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- External annotator for inline highlighting -->
+        <externalAnnotator
+            language=""
+            implementationClass="ai.cybrium.plugin.CybriumAnnotator"/>
+
+        <!-- Tool window for findings -->
+        <toolWindow
+            id="Cybrium"
+            anchor="bottom"
+            icon="/icons/cybrium-13.svg"
+            factoryClass="ai.cybrium.plugin.CybriumToolWindowFactory"/>
+
+        <!-- Project-level service -->
+        <projectService
+            serviceImplementation="ai.cybrium.plugin.CybriumService"/>
+
+        <!-- Settings page -->
+        <projectConfigurable
+            instance="ai.cybrium.plugin.CybriumConfigurable"
+            displayName="Cybrium"
+            id="ai.cybrium.settings"
+            parentId="tools"/>
+    </extensions>
+
+    <actions>
+        <group id="ai.cybrium.menu" text="Cybrium" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="ai.cybrium.scanFile"
+                    class="ai.cybrium.plugin.actions.ScanFileAction"
+                    text="Scan Current File"
+                    description="Run cyscan on the current file"
+                    icon="/icons/cybrium-13.svg"/>
+            <action id="ai.cybrium.scanProject"
+                    class="ai.cybrium.plugin.actions.ScanProjectAction"
+                    text="Scan Project"
+                    description="Run cyscan on the entire project"/>
+            <action id="ai.cybrium.supplyChain"
+                    class="ai.cybrium.plugin.actions.SupplyChainAction"
+                    text="Supply Chain Scan"
+                    description="Check dependencies for CVEs, typosquats, and license issues"/>
+            <action id="ai.cybrium.repoHealth"
+                    class="ai.cybrium.plugin.actions.RepoHealthAction"
+                    text="Repository Health Check"
+                    description="14 security hygiene checks"/>
+            <action id="ai.cybrium.ciaSummary"
+                    class="ai.cybrium.plugin.actions.CiaSummaryAction"
+                    text="CyTriad CIA Summary"
+                    description="Confidentiality, Integrity, Availability posture scores"/>
+        </group>
+    </actions>
+</idea-plugin>
