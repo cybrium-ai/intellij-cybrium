@@ -39,13 +39,28 @@ jobs:
       - name: Verify plugin
         run: ./gradlew verifyPlugin
 
-      - name: Publish to JetBrains Marketplace
-        run: ./gradlew publishPlugin
-        env:
-          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: intellij-cybrium-plugin
+          path: build/distributions/*.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: build/distributions/*.zip
           generate_release_notes: true
+          body: |
+            ## Install
+            1. Download the `.zip` file below
+            2. IntelliJ: Settings > Plugins > Gear icon > Install Plugin from Disk
+            3. Select the downloaded `.zip` file
+            4. Restart IDE
+
+            Requires cyscan: `brew tap cybrium-ai/cli && brew install cyscan`
+
+      - name: Publish to JetBrains Marketplace
+        continue-on-error: true
+        run: ./gradlew publishPlugin
+        env:
+          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
