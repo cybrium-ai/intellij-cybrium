@@ -7,6 +7,11 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.Messages
 
+/**
+ * Scan the currently focused file via cyscan and surface the findings
+ * in a message popup. Richer surfaces (tool window, dependency report,
+ * CIA dashboard) live in their own action classes.
+ */
 class ScanFileAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
@@ -20,41 +25,5 @@ class ScanFileAction : AnAction() {
             val msg = findings.joinToString("\n") { "[${it.severity}] ${it.rule_id}: ${it.title} (line ${it.line})" }
             Messages.showInfoMessage(project, "${findings.size} finding(s):\n\n$msg", "Cybrium Scan Results")
         }
-    }
-}
-
-class ScanProjectAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return
-        val service = project.service<CybriumService>()
-        val findings = service.scan(project.basePath ?: ".")
-        Messages.showInfoMessage(project, "${findings.size} finding(s) across the project", "Cybrium Project Scan")
-    }
-}
-
-class SupplyChainAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return
-        val service = project.service<CybriumService>()
-        val findings = service.supplyChainScan(project.basePath ?: ".")
-        Messages.showInfoMessage(project, "${findings.size} dependency finding(s)", "Cybrium Supply Chain")
-    }
-}
-
-class RepoHealthAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return
-        val service = project.service<CybriumService>()
-        val result = service.repoHealth(project.basePath ?: ".")
-        Messages.showInfoMessage(project, result.take(2000), "Cybrium Repo Health")
-    }
-}
-
-class CiaSummaryAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return
-        val service = project.service<CybriumService>()
-        val findings = service.scan(project.basePath ?: ".", listOf("--cia"))
-        Messages.showInfoMessage(project, "${findings.size} finding(s) with CIA posture", "CyTriad Summary")
     }
 }

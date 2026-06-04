@@ -74,6 +74,11 @@
                     class="ai.cybrium.plugin.actions.SupplyChainAction"
                     text="Supply Chain Scan"
                     description="Check dependencies for CVEs, typosquats, and license issues"/>
+            <action id="ai.cybrium.dependencyReport"
+                    class="ai.cybrium.plugin.actions.DependencyReportAction"
+                    text="Dependency Analytics Report"
+                    description="Vulnerabilities + licenses per dependency — donut overview + tabbed tables"
+                    icon="/icons/cybrium-13.svg"/>
             <action id="ai.cybrium.repoHealth"
                     class="ai.cybrium.plugin.actions.RepoHealthAction"
                     text="Repository Health Check"
