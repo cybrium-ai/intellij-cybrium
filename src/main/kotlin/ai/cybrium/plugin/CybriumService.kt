@@ -58,9 +58,19 @@ class CybriumService(private val project: Project) : PersistentStateComponent<Cy
         return runCyscan(args)
     }
 
-    /** Run cyscan supply on a directory. */
+    /** Run cyscan supply on a directory, return parsed Findings (legacy). */
     fun supplyChainScan(path: String): List<Finding> {
         return runCyscan(listOf(cyscanPath(), "supply", path, "-f", "json"))
+    }
+
+    /**
+     * Sprint 124 P3 — Run cyscan supply on a directory, return the raw
+     * JSON. Used by DependencyReportAction which needs the full structured
+     * dependency tree (vulnerabilities + licenses), not the flat Finding
+     * list that `supplyChainScan` returns.
+     */
+    fun supplyChainScanRaw(path: String): String {
+        return runCyscanRaw(listOf(cyscanPath(), "supply", path, "-f", "json"))
     }
 
     /** Run cyscan health on a directory. */
