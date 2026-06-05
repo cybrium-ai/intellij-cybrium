@@ -79,6 +79,11 @@
                     text="Dependency Analytics Report"
                     description="Vulnerabilities + licenses per dependency — donut overview + tabbed tables"
                     icon="/icons/cybrium-13.svg"/>
+            <action id="ai.cybrium.sendToPlatform"
+                    class="ai.cybrium.plugin.actions.SendToPlatformAction"
+                    text="Send Findings to Cybrium Platform"
+                    description="Run cyscan and POST findings to app.cybrium.ai via the configured API key"
+                    icon="/icons/cybrium-13.svg"/>
             <action id="ai.cybrium.repoHealth"
                     class="ai.cybrium.plugin.actions.RepoHealthAction"
                     text="Repository Health Check"

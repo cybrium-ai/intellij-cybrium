@@ -21,7 +21,25 @@ class CybriumService(private val project: Project) : PersistentStateComponent<Cy
         var autoScanOnSave: Boolean = true,
         var severityFilter: String = "info",
         var showCia: Boolean = true,
+        // Sprint 125 P2 — "Send to Cybrium platform" wiring
+        var platformUrl: String = "https://app.cybrium.ai",
+        var apiKey: String = "",
     )
+
+    /** Configured Cybrium platform base URL. */
+    fun platformUrl(): String = myState.platformUrl.ifBlank { "https://app.cybrium.ai" }
+
+    /** Configured API key (sk-...). Blank if not set. */
+    fun apiKey(): String = myState.apiKey
+
+    /**
+     * Sprint 125 P2 — public wrapper around `runCyscanRaw`. The private
+     * helper stays private; this is the documented entry point for
+     * actions that need raw cyscan output (e.g. SendToPlatformAction
+     * sending findings through the ingest endpoint without intermediate
+     * Finding-list parsing).
+     */
+    fun runCyscanRawAction(args: List<String>): String = runCyscanRaw(args)
 
     override fun getState(): State = myState
     override fun loadState(state: State) { myState = state }
