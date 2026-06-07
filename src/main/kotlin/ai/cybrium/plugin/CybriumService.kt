@@ -117,8 +117,23 @@ class CybriumService(private val project: Project) : PersistentStateComponent<Cy
                 log.info("cyscan stderr: $stderr")
             }
             stdout
+        } catch (e: java.io.IOException) {
+            // ENOENT (cyscan binary not found on PATH) is an EXPECTED state
+            // — user hasn't installed cyscan yet. Don't log at error level
+            // (IntelliJ Platform's log.error with a Throwable triggers a
+            // fatal-error dialog AND gets flagged by the JetBrains Plugin
+            // Verifier as "1 issue occurred during the IDE run", which
+            // blocks marketplace approval). Log at WARN and return "[]"
+            // so callers degrade gracefully.
+            log.warn(
+                "cyscan binary not found or could not be executed: ${e.message}. " +
+                    "Install via `brew install cybrium-ai/cli/cyscan` " +
+                    "or set the path in Settings → Tools → Cybrium."
+            )
+            "[]"
         } catch (e: Exception) {
-            log.error("cyscan execution failed", e)
+            // Unexpected failure during scan — still log at WARN, not ERROR.
+            log.warn("cyscan execution failed", e)
             "[]"
         }
     }
