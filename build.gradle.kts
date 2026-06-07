@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "ai.cybrium"
-version = "0.3.1"
+version = "0.3.2"
 
 repositories {
     mavenCentral()
@@ -24,7 +24,11 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("241")
-        untilBuild.set("251.*")
+        // 252.* covers IntelliJ 2025.1.x (incl. 2025.1.7) and 2025.2.x EAP.
+        // The plugin doesn't use any APIs likely to break across this range —
+        // expand the upper bound to prevent marketplace 'Not compatible'
+        // warnings every time JetBrains ships a new patch release.
+        untilBuild.set("252.*")
     }
 
     signPlugin {
